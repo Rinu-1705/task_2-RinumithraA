@@ -110,25 +110,29 @@ plt.xlabel('Predicted')
 plt.ylabel('Actual')
 plt.show()
 
-# 5. FEATURE IMPORTANCE
+# 5. FEATURE STATISTICS
 print("\n" + "="*50)
-print("STEP 5: FEATURE IMPORTANCE")
+print("STEP 5: FEATURE STATISTICS")
 print("="*50)
 
-feature_importance = pd.DataFrame({
-    'feature': iris.feature_names,
-    'importance': model.feature_importances_
-}).sort_values('importance', ascending=False)
+# Calculate mean and standard deviation for each feature per class
+feature_stats = df.groupby('species_name')[iris.feature_names].mean()
+print("Mean feature values by species:")
+print(feature_stats)
 
-print(feature_importance)
+# Visualize feature statistics
+plt.figure(figsize=(12, 5))
 
-# Visualize feature importance
-plt.figure(figsize=(8, 5))
-plt.bar(feature_importance['feature'], feature_importance['importance'])
-plt.title('Feature Importance')
-plt.xlabel('Features')
-plt.ylabel('Importance Score')
-plt.xticks(rotation=45)
+for idx, feature in enumerate(iris.feature_names, 1):
+    plt.subplot(2, 2, idx)
+    for species in ['setosa', 'versicolor', 'virginica']:
+        species_data = df[df['species_name'] == species][feature]
+        plt.hist(species_data, alpha=0.6, label=species, bins=10)
+    plt.xlabel(feature)
+    plt.ylabel('Frequency')
+    plt.title(f'Distribution of {feature}')
+    plt.legend()
+
 plt.tight_layout()
 plt.show()
 
